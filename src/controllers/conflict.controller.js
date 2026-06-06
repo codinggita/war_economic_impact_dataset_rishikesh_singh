@@ -1,4 +1,4 @@
-import Conflict from '../models/conflict.model.js';
+import * as conflictService from '../services/conflict.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 /**
@@ -7,7 +7,7 @@ import asyncHandler from '../utils/asyncHandler.js';
  * @access    Public
  */
 export const createConflict = asyncHandler(async (req, res) => {
-  const conflict = await Conflict.create(req.body);
+  const conflict = await conflictService.createConflict(req.body);
   res.status(201).json({
     success: true,
     message: 'Conflict record created successfully.',
@@ -21,7 +21,7 @@ export const createConflict = asyncHandler(async (req, res) => {
  * @access    Public
  */
 export const getAllConflicts = asyncHandler(async (req, res) => {
-  const conflicts = await Conflict.find();
+  const conflicts = await conflictService.getConflicts();
   res.status(200).json({
     success: true,
     message: 'Conflicts fetched successfully.',
@@ -35,7 +35,7 @@ export const getAllConflicts = asyncHandler(async (req, res) => {
  * @access    Public
  */
 export const getConflictById = asyncHandler(async (req, res) => {
-  const conflict = await Conflict.findById(req.params.id);
+  const conflict = await conflictService.getConflictById(req.params.id);
   if (!conflict) {
     res.status(404).json({
       success: false,
@@ -56,10 +56,7 @@ export const getConflictById = asyncHandler(async (req, res) => {
  * @access    Public
  */
 export const updateConflict = asyncHandler(async (req, res) => {
-  const conflict = await Conflict.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true
-  });
+  const conflict = await conflictService.updateConflict(req.params.id, req.body, false);
   if (!conflict) {
     res.status(404).json({
       success: false,
@@ -80,11 +77,7 @@ export const updateConflict = asyncHandler(async (req, res) => {
  * @access    Public
  */
 export const replaceConflict = asyncHandler(async (req, res) => {
-  const conflict = await Conflict.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    overwrite: true,
-    runValidators: true
-  });
+  const conflict = await conflictService.updateConflict(req.params.id, req.body, true);
   if (!conflict) {
     res.status(404).json({
       success: false,
@@ -105,7 +98,7 @@ export const replaceConflict = asyncHandler(async (req, res) => {
  * @access    Public
  */
 export const deleteConflict = asyncHandler(async (req, res) => {
-  const conflict = await Conflict.findByIdAndDelete(req.params.id);
+  const conflict = await conflictService.deleteConflict(req.params.id);
   if (!conflict) {
     res.status(404).json({
       success: false,
