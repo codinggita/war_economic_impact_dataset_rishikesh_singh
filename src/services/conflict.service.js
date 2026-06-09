@@ -10,16 +10,17 @@ export const createConflict = async (data) => {
 };
 
 /**
- * Fetch conflicts based on filters and pagination options.
+ * Fetch conflicts based on filters and pagination/sorting options.
  * @param {Object} filter - Mongoose filter object
- * @param {Object} options - Pagination options (page, limit, skip, sort)
+ * @param {Object} options - Pagination/sorting options (page, limit, skip, sort)
  * @returns {Promise<Object>} Object containing paginated conflicts list and counts metadata
  */
 export const getConflicts = async (filter = {}, options = {}) => {
-  const { skip, limit } = options;
+  const { skip, limit, sort } = options;
 
-  // Query conflicts with limit and skip constraints
+  // Query conflicts with sorting, limit and skip constraints
   const conflicts = await Conflict.find(filter)
+    .sort(sort)
     .skip(skip)
     .limit(limit);
 
