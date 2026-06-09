@@ -19,17 +19,27 @@ export const createConflict = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc      Get all conflicts with categorical filtering
+ * @desc      Get all conflicts with paginated filtering
  * @route     GET /conflicts
  * @access    Public
  */
 export const getAllConflicts = asyncHandler(async (req, res) => {
-  const { filter } = parseQuery(req.query);
-  const conflicts = await conflictService.getConflicts(filter);
+  const { filter, options } = parseQuery(req.query);
+  const result = await conflictService.getConflicts(filter, options);
+  
+  const meta = {
+    total: result.total,
+    page: result.page,
+    limit: result.limit,
+    totalPages: result.totalPages,
+    count: result.count
+  };
+
   return new ApiResponse(
     HTTP_STATUS.OK,
     'Conflicts fetched successfully.',
-    conflicts
+    result.conflicts,
+    meta
   ).send(res);
 });
 
