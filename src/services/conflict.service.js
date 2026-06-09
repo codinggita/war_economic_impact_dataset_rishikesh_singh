@@ -10,12 +10,12 @@ export const createConflict = async (data) => {
 };
 
 /**
- * Fetch conflicts based on filters and options.
- * (Paging/sorting will be integrated in future PRs).
- * @returns {Promise<Array>} List of conflict documents
+ * Fetch conflicts based on filters.
+ * @param {Object} filter - Mongoose filter object
+ * @returns {Promise<Array>} List of conflict documents matching query filters
  */
-export const getConflicts = async () => {
-  return Conflict.find();
+export const getConflicts = async (filter = {}) => {
+  return Conflict.find(filter);
 };
 
 /**
