@@ -1,5 +1,7 @@
 import * as conflictService from '../services/conflict.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
+import ApiResponse from '../utils/apiResponse.js';
+import { HTTP_STATUS } from '../constants/index.js';
 
 /**
  * @desc      Create a new conflict record
@@ -8,11 +10,11 @@ import asyncHandler from '../utils/asyncHandler.js';
  */
 export const createConflict = asyncHandler(async (req, res) => {
   const conflict = await conflictService.createConflict(req.body);
-  res.status(201).json({
-    success: true,
-    message: 'Conflict record created successfully.',
-    data: conflict
-  });
+  return new ApiResponse(
+    HTTP_STATUS.CREATED,
+    'Conflict record created successfully.',
+    conflict
+  ).send(res);
 });
 
 /**
@@ -22,11 +24,11 @@ export const createConflict = asyncHandler(async (req, res) => {
  */
 export const getAllConflicts = asyncHandler(async (req, res) => {
   const conflicts = await conflictService.getConflicts();
-  res.status(200).json({
-    success: true,
-    message: 'Conflicts fetched successfully.',
-    data: conflicts
-  });
+  return new ApiResponse(
+    HTTP_STATUS.OK,
+    'Conflicts fetched successfully.',
+    conflicts
+  ).send(res);
 });
 
 /**
@@ -43,11 +45,11 @@ export const getConflictById = asyncHandler(async (req, res) => {
     });
     return;
   }
-  res.status(200).json({
-    success: true,
-    message: 'Conflict record retrieved successfully.',
-    data: conflict
-  });
+  return new ApiResponse(
+    HTTP_STATUS.OK,
+    'Conflict record retrieved successfully.',
+    conflict
+  ).send(res);
 });
 
 /**
@@ -64,11 +66,11 @@ export const updateConflict = asyncHandler(async (req, res) => {
     });
     return;
   }
-  res.status(200).json({
-    success: true,
-    message: 'Conflict record updated successfully.',
-    data: conflict
-  });
+  return new ApiResponse(
+    HTTP_STATUS.OK,
+    'Conflict record updated successfully.',
+    conflict
+  ).send(res);
 });
 
 /**
@@ -85,11 +87,11 @@ export const replaceConflict = asyncHandler(async (req, res) => {
     });
     return;
   }
-  res.status(200).json({
-    success: true,
-    message: 'Conflict record replaced successfully.',
-    data: conflict
-  });
+  return new ApiResponse(
+    HTTP_STATUS.OK,
+    'Conflict record replaced successfully.',
+    conflict
+  ).send(res);
 });
 
 /**
@@ -106,9 +108,9 @@ export const deleteConflict = asyncHandler(async (req, res) => {
     });
     return;
   }
-  res.status(200).json({
-    success: true,
-    message: 'Conflict record deleted successfully.',
-    data: conflict
-  });
+  return new ApiResponse(
+    HTTP_STATUS.OK,
+    'Conflict record deleted successfully.',
+    conflict
+  ).send(res);
 });
