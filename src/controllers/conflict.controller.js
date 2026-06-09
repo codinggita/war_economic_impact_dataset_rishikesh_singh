@@ -1,6 +1,7 @@
 import * as conflictService from '../services/conflict.service.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiResponse from '../utils/apiResponse.js';
+import { parseQuery } from '../utils/queryParser.js';
 import { HTTP_STATUS } from '../constants/index.js';
 
 /**
@@ -18,12 +19,13 @@ export const createConflict = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc      Get all conflicts
+ * @desc      Get all conflicts with categorical filtering
  * @route     GET /conflicts
  * @access    Public
  */
 export const getAllConflicts = asyncHandler(async (req, res) => {
-  const conflicts = await conflictService.getConflicts();
+  const { filter } = parseQuery(req.query);
+  const conflicts = await conflictService.getConflicts(filter);
   return new ApiResponse(
     HTTP_STATUS.OK,
     'Conflicts fetched successfully.',
