@@ -39,7 +39,7 @@ const SORT_FIELD_MAP = {
 
 /**
  * Parses URL query parameters into a Mongoose-friendly filter and options structure.
- * Standardizes categorical queries, fields aliases, boolean flags, and sorting.
+ * Standardizes categorical queries, fields aliases, boolean flags, sorting, and global search.
  * 
  * @param {object} query - Express req.query object
  * @returns {object} { filter, options: { page, limit, skip, sort } }
@@ -47,7 +47,9 @@ const SORT_FIELD_MAP = {
 export const parseQuery = (query) => {
   const filter = {};
 
-  // Simple Categorical Filters
+  // ==========================================
+  // 1. Simple Categorical Filters
+  // ==========================================
   const simpleFields = [
     'region',
     'status',
@@ -79,6 +81,23 @@ export const parseQuery = (query) => {
   const profiteeringVal = parseBooleanQuery(query.warProfiteeringDocumented ?? query.profiteering);
   if (profiteeringVal !== undefined) {
     filter.warProfiteeringDocumented = profiteeringVal;
+  }
+
+  // ==========================================
+  // 2. Global Keyword Search
+  // ==========================================
+  if (query.keyword !== undefined && query.keyword.trim() !== '') {
+    const term = query.keyword.trim();
+    filter.$or = [
+      { conflictName: { $regex: term, $options: 'i' } },
+      { conflictType: { $regex: term, $options: 'i' } },
+      { region: { $regex: term, $options: 'i' } },
+      { primaryCountry: { $regex: term, $options: 'i' } },
+      { mostAffectedSector: { $regex: term, $options: 'i' } },
+      { primaryBlackMarketGoods: { $regex: term, $options: 'i' } },
+      { blackMarketActivityLevel: { $regex: term, $options: 'i' } },
+      { status: { $regex: term, $options: 'i' } }
+    ];
   }
 
   // Pagination baseline
