@@ -39,3 +39,29 @@ export const protect = asyncHandler(async (req, res, next) => {
     return next(new ApiError(401, 'Not authorized, no session token was provided.'));
   }
 });
+
+/**
+ * Role-based authorization middleware.
+ * Intercepts requests and validates that req.user.role belongs to the permitted set.
+ * 
+ * @param {...string} roles - Permitted roles (e.g. 'admin', 'user')
+ * @returns {Function} Express middleware function
+ */
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return next(new ApiError(401, 'Session unauthorized. Please authenticate.'));
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new ApiError(
+          403,
+          `Forbidden: User role '${req.user.role}' is not authorized to access this route.`
+        )
+      );
+    }
+
+    next();
+  };
+};
