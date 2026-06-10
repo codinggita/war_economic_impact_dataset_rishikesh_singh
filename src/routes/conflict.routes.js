@@ -7,17 +7,21 @@ import {
   replaceConflict,
   deleteConflict,
 } from '../controllers/conflict.controller.js';
+import { protect, authorize } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
+// Public read routes, protected write routes
 router.route('/')
-  .post(createConflict)
+  .post(protect, createConflict)
   .get(getAllConflicts);
 
+// Public lookup route, protected patch, put, and delete routes
+// Only admins are permitted to delete a record
 router.route('/:id')
   .get(getConflictById)
-  .patch(updateConflict)
-  .put(replaceConflict)
-  .delete(deleteConflict);
+  .patch(protect, updateConflict)
+  .put(protect, replaceConflict)
+  .delete(protect, authorize('admin'), deleteConflict);
 
 export default router;
