@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Navbar from './components/Navbar';
 import Auth from './components/Auth';
-import { LogOut, Shield } from 'lucide-react';
 
 function AppContent() {
-  const { user, logout, loading } = useAuth();
+  const { loading } = useAuth();
+  const [currentView, setCurrentView] = useState('dashboard');
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   if (loading) {
     return (
@@ -24,25 +26,64 @@ function AppContent() {
     );
   }
 
+  // Handle switching views
+  const handleViewChange = (view) => {
+    setCurrentView(view);
+    setShowAuthModal(false);
+  };
+
   return (
     <div className="app-container">
-      {user ? (
-        <div style={{ padding: '24px', maxWidth: '600px', margin: '80px auto' }} className="glass-panel animate-fade-in">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Shield size={32} style={{ color: 'var(--primary)' }} />
-            <h2>Session Established</h2>
+      {/* Central Navigation Header */}
+      <Navbar
+        currentView={showAuthModal ? 'auth' : currentView}
+        onViewChange={handleViewChange}
+        onAuthTrigger={() => setShowAuthModal(true)}
+      />
+
+      <main className="main-content">
+        {showAuthModal ? (
+          <Auth onSuccess={() => setShowAuthModal(false)} />
+        ) : (
+          <div className="animate-fade-in">
+            {currentView === 'dashboard' && (
+              <div className="glass-panel" style={{ padding: '32px' }}>
+                <h2 style={{ marginBottom: '12px' }}>Research Analytics Dashboard</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>
+                  This dashboard will display interactive charts, macroeconomic variables, and extreme war-cost datasets.
+                </p>
+                <div style={{
+                  marginTop: '24px',
+                  height: '200px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px dashed var(--border-color)',
+                  borderRadius: '8px'
+                }} className="flex-center">
+                  <span style={{ color: 'var(--text-muted)' }}>Dashboard metrics are placeholder. Pending PR #26 integration.</span>
+                </div>
+              </div>
+            )}
+
+            {currentView === 'explorer' && (
+              <div className="glass-panel" style={{ padding: '32px' }}>
+                <h2 style={{ marginBottom: '12px' }}>Conflict Registry Explorer</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>
+                  This grid will support real-time regex searching, multi-field filtering, sorting whitelist configurations, and data pagination.
+                </p>
+                <div style={{
+                  marginTop: '24px',
+                  height: '200px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px dashed var(--border-color)',
+                  borderRadius: '8px'
+                }} className="flex-center">
+                  <span style={{ color: 'var(--text-muted)' }}>Conflict explorer data table is placeholder. Pending PR #27 integration.</span>
+                </div>
+              </div>
+            )}
           </div>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
-            Logged in as <strong>{user.name}</strong> ({user.email}) with role: <span className="badge badge-info">{user.role}</span>.
-          </p>
-          <button onClick={logout} className="btn btn-secondary" style={{ display: 'inline-flex', gap: '8px' }}>
-            <LogOut size={16} />
-            Sign Out
-          </button>
-        </div>
-      ) : (
-        <Auth />
-      )}
+        )}
+      </main>
     </div>
   );
 }
