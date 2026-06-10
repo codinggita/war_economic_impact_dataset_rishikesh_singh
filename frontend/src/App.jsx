@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
+import ConflictExplorer from './components/ConflictExplorer';
 
 function AppContent() {
   const { loading } = useAuth();
@@ -50,21 +51,10 @@ function AppContent() {
             {currentView === 'dashboard' && <Dashboard />}
 
             {currentView === 'explorer' && (
-              <div className="glass-panel" style={{ padding: '32px' }}>
-                <h2 style={{ marginBottom: '12px' }}>Conflict Registry Explorer</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  This grid will support real-time regex searching, multi-field filtering, sorting whitelist configurations, and data pagination.
-                </p>
-                <div style={{
-                  marginTop: '24px',
-                  height: '200px',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px dashed var(--border-color)',
-                  borderRadius: '8px'
-                }} className="flex-center">
-                  <span style={{ color: 'var(--text-muted)' }}>Conflict explorer data table is placeholder. Pending PR #27 integration.</span>
-                </div>
-              </div>
+              <ConflictExplorer
+                onEditConflict={(item) => console.log('Edit clicked for:', item)}
+                onCreateConflict={() => console.log('Create clicked')}
+              />
             )}
           </div>
         )}
