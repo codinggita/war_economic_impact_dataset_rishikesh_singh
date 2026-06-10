@@ -4,11 +4,15 @@ import Navbar from './components/Navbar';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 import ConflictExplorer from './components/ConflictExplorer';
+import ConflictModal from './components/ConflictModal';
 
 function AppContent() {
   const { loading } = useAuth();
   const [currentView, setCurrentView] = useState('dashboard');
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedConflict, setSelectedConflict] = useState(null);
+  const [explorerRefreshKey, setExplorerRefreshKey] = useState(0);
 
   if (loading) {
     return (
@@ -34,6 +38,25 @@ function AppContent() {
     setShowAuthModal(false);
   };
 
+  // Open modal for editing
+  const handleEditConflict = (conflict) => {
+    setSelectedConflict(conflict);
+    setShowModal(true);
+  };
+
+  // Open modal for creating
+  const handleCreateConflict = () => {
+    setSelectedConflict(null);
+    setShowModal(true);
+  };
+
+  // Callback on successful modal save
+  const handleModalSuccess = () => {
+    setShowModal(false);
+    setSelectedConflict(null);
+    setExplorerRefreshKey((k) => k + 1); // Trigger refresh
+  };
+
   return (
     <div className="app-container">
       {/* Central Navigation Header */}
@@ -48,17 +71,27 @@ function AppContent() {
           <Auth onSuccess={() => setShowAuthModal(false)} />
         ) : (
           <div className="animate-fade-in">
-            {currentView === 'dashboard' && <Dashboard />}
+            {currentView === 'dashboard' && <Dashboard key={explorerRefreshKey} />}
 
             {currentView === 'explorer' && (
               <ConflictExplorer
-                onEditConflict={(item) => console.log('Edit clicked for:', item)}
-                onCreateConflict={() => console.log('Create clicked')}
+                key={explorerRefreshKey}
+                onEditConflict={handleEditConflict}
+                onCreateConflict={handleCreateConflict}
               />
             )}
           </div>
         )}
       </main>
+
+      {/* Popup CRUD Form Modal */}
+      {showModal && (
+        <ConflictModal
+          conflict={selectedConflict}
+          onClose={() => setShowModal(false)}
+          onSuccess={handleModalSuccess}
+        />
+      )}
     </div>
   );
 }
