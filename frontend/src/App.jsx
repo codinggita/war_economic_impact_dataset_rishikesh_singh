@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Auth from './components/Auth';
+import Dashboard from './components/Dashboard';
 
 function AppContent() {
   const { loading } = useAuth();
@@ -46,23 +47,7 @@ function AppContent() {
           <Auth onSuccess={() => setShowAuthModal(false)} />
         ) : (
           <div className="animate-fade-in">
-            {currentView === 'dashboard' && (
-              <div className="glass-panel" style={{ padding: '32px' }}>
-                <h2 style={{ marginBottom: '12px' }}>Research Analytics Dashboard</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  This dashboard will display interactive charts, macroeconomic variables, and extreme war-cost datasets.
-                </p>
-                <div style={{
-                  marginTop: '24px',
-                  height: '200px',
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px dashed var(--border-color)',
-                  borderRadius: '8px'
-                }} className="flex-center">
-                  <span style={{ color: 'var(--text-muted)' }}>Dashboard metrics are placeholder. Pending PR #26 integration.</span>
-                </div>
-              </div>
-            )}
+            {currentView === 'dashboard' && <Dashboard />}
 
             {currentView === 'explorer' && (
               <div className="glass-panel" style={{ padding: '32px' }}>
