@@ -10,13 +10,14 @@ import {
 import { validateBody } from '../middlewares/validation.middleware.js';
 import { validateConflict } from '../validators/conflict.validator.js';
 import { protect, authorize } from '../middlewares/auth.middleware.js';
+import { searchLimiter } from '../middlewares/rateLimit.middleware.js';
 
 const router = express.Router();
 
-// Public read routes, protected write routes (Payload validated on create)
+// Public read routes, protected write routes (Payload validated and search rate-limited)
 router.route('/')
   .post(protect, validateBody(validateConflict), createConflict)
-  .get(getAllConflicts);
+  .get(searchLimiter, getAllConflicts);
 
 // Public lookup route, protected patch, put, and delete routes
 // Only admins are permitted to delete a record. Payload validated on update/replace.
