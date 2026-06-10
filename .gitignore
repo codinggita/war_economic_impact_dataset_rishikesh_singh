@@ -1,5 +1,11 @@
+# Ignore node modules and build distributions globally
 node_modules/
-.env
+dist/
 temp_clone/
 .gemini/
 *.log
+
+# Ignore environment variables
+.env
+backend/.env
+frontend/.env
