@@ -1,0 +1,589 @@
+{
+  "info": {
+    "_postman_id": "8b5f3a02-d9f2-45bb-b6a8-a3f16d7a421b",
+    "name": "War Economic Impact API",
+    "description": "Production-grade Postman collection for the War Economic Impact API. Includes authorization token flows and testing scripts.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data && jsonData.data.token) {",
+                  "    pm.environment.set(\"jwt_token\", jsonData.data.token);",
+                  "}",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response returns token\", function () {",
+                  "    pm.expect(jsonData.data.token).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Student Dev\",\n  \"email\": \"student.dev@example.com\",\n  \"password\": \"securedpassword123\",\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data && jsonData.data.token) {",
+                  "    pm.environment.set(\"jwt_token\", jsonData.data.token);",
+                  "}",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Login successful\", function () {",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student.dev@example.com\",\n  \"password\": \"securedpassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile Info (Me)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Conflicts",
+      "item": [
+        {
+          "name": "Get All Conflicts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts?page=1&limit=10&sort=-inflationRate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "-inflationRate"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Conflicts with Filter",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts?region=Middle East&minInflation=10&gdpLossAbove=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts"
+              ],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "Middle East"
+                },
+                {
+                  "key": "minInflation",
+                  "value": "10"
+                },
+                {
+                  "key": "gdpLossAbove",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Conflicts (Keyword)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts?keyword=WWII",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "WWII"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Conflict By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/{{conflict_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "{{conflict_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Conflict",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conflictName\": \"Gulf War II\",\n  \"conflictType\": \"Interstate War\",\n  \"region\": \"Middle East\",\n  \"startYear\": 2003,\n  \"endYear\": 2011,\n  \"status\": \"Resolved\",\n  \"primaryCountry\": \"Iraq\",\n  \"preWarUnemployment\": 10,\n  \"duringWarUnemployment\": 28,\n  \"unemploymentSpike\": 18,\n  \"mostAffectedSector\": \"Energy\",\n  \"youthUnemploymentChange\": 20,\n  \"preWarPovertyRate\": 15,\n  \"duringWarPovertyRate\": 35,\n  \"extremePovertyRate\": 18,\n  \"foodInsecurityRate\": 25,\n  \"householdsFallenIntoPoverty\": 10500,\n  \"gdpChange\": -15.5,\n  \"inflationRate\": 45.2,\n  \"currencyDevaluation\": 60.1,\n  \"warCostUsd\": 250000000000,\n  \"reconstructionCostUsd\": 120000000000,\n  \"informalEconomyPreWar\": 22,\n  \"informalEconomyDuringWar\": 48,\n  \"blackMarketActivityLevel\": \"High\",\n  \"primaryBlackMarketGoods\": \"weapons, fuel\",\n  \"currencyBlackMarketGap\": 18.5,\n  \"warProfiteeringDocumented\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/conflicts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Conflict (Partial)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Ongoing\",\n  \"endYear\": 2028\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/conflicts/{{conflict_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "{{conflict_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Conflict",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/{{conflict_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "{{conflict_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Statistics",
+      "item": [
+        {
+          "name": "Stats Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/overview",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "overview"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Highest Inflation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/highest-inflation",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "highest-inflation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Lowest GDP Change",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/lowest-gdp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "lowest-gdp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Highest War Cost",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/highest-warcost",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "highest-warcost"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Highest Reconstruction",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/highest-reconstruction",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "highest-reconstruction"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Region Distribution",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/region-distribution",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "region-distribution"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Type Distribution",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/type-distribution",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "type-distribution"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "War Cost By Region",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/warcost-by-region",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "warcost-by-region"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inflation By Region",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/conflicts/stats/inflation-by-region",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "conflicts",
+                "stats",
+                "inflation-by-region"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Diagnostics",
+      "item": [
+        {
+          "name": "Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API Version",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/version",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "version"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
